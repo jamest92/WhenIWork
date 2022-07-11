@@ -1,0 +1,44 @@
+# import relevant libraries
+import sys
+from string import ascii_lowercase
+import pandas as pd
+
+# base url according to assignment
+base_url = 'https://public.wiwdata.com/engineering-challenge/data/'
+
+# function to aggregate multiple CSVs and export pivot table
+def export_csv(url):
+
+    # make an empty data frame
+    table = pd.DataFrame([])
+    # assii_lovercase fuction returns all alphabet characters in lower case
+    for character in ascii_lowercase:
+        try:
+            complete_url = f'{url}{character}.csv'
+            # pandas to read the csv file from the completed url
+            df = pd.read_csv(complete_url)
+            # concat the new data with the previuws data
+            table = pd.concat([table, df])
+        except:
+            # if there is an error in reading the file then log the error
+            print(f'Error in reading the {character}.csv file')
+
+    # if table contains data then
+    if not table.empty:
+        # pandas make pivot table bases upon the sum of the path of again userid
+        table = pd.pivot_table(table, index=["user_id"], columns=[
+                               "path"], values="length", aggfunc="sum", fill_value=0)
+        # export file in result .csv
+        table.to_csv(path_or_buf='result.csv')
+        print("csv exported successfully")
+
+# main method
+def main():
+    # call export csv method
+    export_csv(base_url)
+
+
+
+# main function
+if __name__ == "__main__":
+    main()
