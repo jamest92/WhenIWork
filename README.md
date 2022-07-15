@@ -47,7 +47,7 @@ def extract_files_from_s3(url):
  ```
 
 ### Transforming the data:
-This function simply transforms the aggregated dataframe frame into a pivot table format. The pivot table contains one row for each `user_id` and has columns populated with the `length` of time each user spent on each `path`.
+This function simply transforms the aggregated dataframe frame into a pivot table format. The pivot table contains one row for each `user_id` and has columns populated with the `length` of time each user spent on each `path`. If there were no time spent on a particular `path`, then the default value is 0. 
 
 ```
 def format_output_for_csv(table):
@@ -86,5 +86,17 @@ def main():
   pivot_table = format_output_for_csv(combined_table)
   load_csv_locally(pivot_table)
 ```
+
+
+## Success Criteria
+1. The program should be designed so that the root URL could be changed later and the
+program re-run on new data. That means downloading the data must be done within the
+program.
+2. The program should write out to a standard CSV file that can be opened in Excel for
+review.
+3. The program should be written in python3.
+4. The program should be available in a public GitHub or GitLab account with
+documentation on how to install and run it.
+
 
 
