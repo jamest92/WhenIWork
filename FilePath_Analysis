@@ -1,0 +1,52 @@
+# Import relevant libraries
+from string import ascii_lowercase
+import pandas as pd
+
+# base url according to assignment
+base_url = 'https://public.wiwdata.com/engineering-challenge/data/'
+
+
+def extract_files_from_s3(url):
+  # make an empty data frame
+  table = pd.DataFrame([])
+  # ascii_lovercase function returns all alphabets characters in lower case
+  for character in ascii_lowercase:
+    try:
+      complete_url = f'{url}{character}.csv'
+      # pandas to read the csv file from the completed url
+      df = pd.read_csv(complete_url)
+      # concat the new data with the previuws data
+      table = pd.concat([table, df])
+    except:
+      # if there is an error in reading the file then log the error
+      print(f'Error in reading the {character}.csv file')
+  return table
+
+
+def format_output_for_csv(table):
+  if not table.empty:
+    # pandas make pivot table bases upon the sum of the path of again userid
+    pivot_table = pd.pivot_table(table, 
+                           index=["user_id"], 
+                           columns=["path"], 
+                           values="length", 
+                           aggfunc="sum", 
+                           fill_value=0)
+    return pivot_table
+
+def load_csv_locally(pivot_table):
+  # export file in result .csv
+  pivot_table.to_csv(path_or_buf='result.csv')
+  print("csv exported successfully")
+
+
+# main method
+def main():
+  # call export csv method
+  combined_table = extract_files_from_s3(base_url)
+  pivot_table = format_output_for_csv(combined_table)
+  load_csv_locally(pivot_table)
+
+# main function
+if __name__ == "__main__":
+  main()
